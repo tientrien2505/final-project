@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/sweetalert/sweetalert.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/jquery-datatable/dataTables.bootstrap4.min.css') }}">
+{% endblock %}
+
+{{ wtf.quick_form(form) }}
+{% block main_content %}
+<div class="row clearfix">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="header">
+                <h2>Camera List</h2>
+                <ul class="header-dropdown">
+                    <li><a href="javascript:void(0);" class="btn btn-info" data-toggle="modal" data-target="#addcontact">Add New</a></li>
+                </ul>
+            </div>
+            <div class="body">
+                <div class="table-responsive">
+                    <table class="table table-hover js-basic-example dataTable table-custom table-striped m-b-0 c_list">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>
+                                    <label class="fancy-checkbox">
+                                        <input class="select-all" type="checkbox" name="checkbox">
+                                        <span></span>
+                                    </label>
+                                </th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>IP Address</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for camera in camera_list %}
+                            <tr class="clickable-row" data-url="{{ camera.ip_address }}" data-rtsp_transport={{ camera.rtsp_transport }} data-camera_code="{{ camera.code }}" style="cursor: pointer;">
+                                <td class="width45">
+                                    <label class="fancy-checkbox">
+                                        <input class="checkbox-tick" type="checkbox" name="checkbox">
+                                        <span></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0">{{ camera.camera_name }}</h6>
+                                </td>
+                                <td><span>{{ camera.code }}</span></td>
+                                <td><span>{{ camera.ip_address }}</span></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="fa fa-edit"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger js-sweetalert" title="Delete" data-type="confirm" data-object_id="{{ camera.camera_id }}"><i class="fa fa-trash-o"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="header">
+                <h2>Camera</h2>
+                <span id="camera_code"></span>
+            </div>
+            <div class="body">
+                <img id="camera_display" width="100%">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal animated zoomIn" id="addcontact" tabindex="-1" role="dialog">
+    <form action="" method="POST">
+        {{ form.csrf_token }}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="title" id="defaultModalLabel">Add Camera</h6>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                {{ form.camera_name(class="form-control", placeholder="Name") }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.code(class="form-control", placeholder="Code") }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.ip_address(class="form-control", placeholder="IP Address") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{ form.submit(class="btn btn-primary", type="submit") }}
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+    function deleteObject(object_id) {
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('delete_camera') }}",
+            data: {
+                camera_id: object_id
+            },
+            success: function(res){
+                console.log(res)
+                if (res.success){
+                    location.reload()
+                }
+            }
+        })
+    }
+</script>
+<script src="{{ url_for('static', filename='bundles/datatablescripts.bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/sweetalert/sweetalert.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/pages/tables/jquery-datatable.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/ui/dialogs.js') }}"></script>
+<script>
+    $(".clickable-row").click(function() {
+        let url = $(this).data('url')
+        let camera_code = $(this).data('camera_code')
+        let rtsp_transport = $(this).data('rtsp_transport')
+        $("#camera_code").text(camera_code)
+        $("#camera_display").attr('src', "")
+        $("#camera_display").attr('src', "{{ url_for('video_feed') }}" + "?url=" + url + "&rtsp_transport=" + rtsp_transport)
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{{ wtf.quick_form(form) }}
+{% block main_content %}
+<div class="row clearfix">
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="body">
+                <img src="{{ url_for('video_feed', url='rtsp://admin:camera123@192.168.88.216') }}" alt="" width="100%">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="body">
+                <img src="{{ url_for('video_feed', url='rtsp://admin:GXEKRA@192.168.88.130') }}" alt="" width="100%">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="body">
+                <img src="{{ url_for('video_feed', url='rtsp://admin:HYTMQD@192.168.88.131') }}" alt="" width="100%">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="body">
+                <img src="{{ url_for('video_feed', url='rtsp://admin:camera123@192.168.88.216') }}" alt="" width="100%">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="body">
+                <img src="{{ url_for('video_feed', url='rtsp://admin:GXEKRA@192.168.88.130') }}" alt="" width="100%">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="body">
+                <img src="{{ url_for('video_feed', url='rtsp://admin:HYTMQD@192.168.88.131') }}" alt="" width="100%">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+{% endblock %}
